@@ -720,7 +720,8 @@ void CollieIOFile::createMassPoint_EvtList(int parX,  int parY, int parZ, int nV
   map<string,double> inputAlphaS;
   for(uint i = 0; i<sig.size(); i++){
     if(sig[i]==NULL) continue;
-    const char* tmpName = channel_->getSignalName(i);
+    // const char* tmpName = channel_->getSignalName(i);
+    const std::string tmpName = channel_->getSignalName(i);
 
     CollieDistribution* dist = point->getSignalDistMutable(i);
     CollieHistogram* sigHist = new CollieHistogram();
@@ -757,7 +758,8 @@ void CollieIOFile::createMassPoint_EvtList(int parX,  int parY, int parZ, int nV
   map<string,double> inputAlphaB;
   for(uint i = 0; i<bkg.size(); i++){
     if(bkg[i]==NULL) continue;
-    const char* tmpName = channel_->getBackgroundName(i);
+    // const char* tmpName = channel_->getBackgroundName(i);
+    const std::string tmpName = channel_->getBackgroundName(i);
     CollieDistribution* dist = point->getBkgdDistMutable(i);
 
     CollieHistogram* hist = new CollieHistogram();
@@ -801,13 +803,13 @@ void CollieIOFile::createMassPoint(int parX,  int parY, int parZ, TH1D* data,  v
   if(bkg.size()!=nBkgd_) {printf("CollieIOFile::createMassPoint, Error: Mismatched bkgd sizes: %d, %d\n",bkg.size(),nBkgd_); return; }
   if(sig.size()!=nSig_) {printf("CollieIOFile::createMassPoint, Error: Mismatched signal sizes: %d, %d\n",sig.size(),nSig_); return; }
 
-  for(int i=0; i<sig[0]->GetNbinsX(); i++)
-    std::cout << " before check bins " << i << "  " << sig[0]->GetBinContent(i+1) << std::endl;
+  // for(int i=0; i<sig[0]->GetNbinsX(); i++)
+  //   std::cout << " before check bins " << i << "  " << sig[0]->GetBinContent(i+1) << std::endl;
 
   checkBins(data,sig,bkg);
 
-  for(int i=0; i<sig[0]->GetNbinsX(); i++)
-    std::cout << " after check bins " << i << "  " << sig[0]->GetBinContent(i+1) << std::endl;
+  // for(int i=0; i<sig[0]->GetNbinsX(); i++)
+  //   std::cout << " after check bins " << i << "  " << sig[0]->GetBinContent(i+1) << std::endl;
 
   //  printf("Internal rate1: %f, %f, %f\n",bkg[0]->Integral(), data->Integral(),sig[0]->Integral());
   //  printf("information0: %d, %d, %d, %d,\n",parX,parY,parZ,mIndex(parX,parY,parZ));
@@ -824,7 +826,8 @@ void CollieIOFile::createMassPoint(int parX,  int parY, int parZ, TH1D* data,  v
     if(sig[i]==NULL) continue;
 
 
-    const char* tmpName = channel_->getSignalName(i);
+    // const char* tmpName = channel_->getSignalName(i);
+    const std::string tmpName = channel_->getSignalName(i);
     applyCuts(sig[i]);
     std::cout << " DEBUG signal name : " << tmpName << std::endl;
 
@@ -872,15 +875,20 @@ void CollieIOFile::createMassPoint(int parX,  int parY, int parZ, TH1D* data,  v
   map<string,CollieHistogram*> inputB;
   map<string,double> inputAlphaB;
   for(uint i = 0; i<bkg.size(); i++){
+    std::cout << " create mass point loop bkg is : " << bkg.size() << std::endl;
     if(bkg[i]==NULL) continue;
     applyCuts(bkg[i]);
-    const char* tmpName = channel_->getBackgroundName(i);
+    // const char* tmpName = channel_->getBackgroundName(i);
+    // const std::string tmpName = channel_->getBackgroundName(i);
+    const std::string tmpName = "bkg"+i;
+    std::cout << " background name " << i << "  " << tmpName << std::endl;
     CollieDistribution* dist = point->getBkgdDistMutable(i);
 
     CollieHistogram* hist = new CollieHistogram();
     if(parZ>0 && parY>0) sprintf(title,"%s Final Variable - %d,%d,%d",tmpName,parX, parY, parZ);
     else if(parY>0) sprintf(title,"%s Final Variable - %d,%d",tmpName,parX,parY);
-    else sprintf(title,"%s Final Variable - %d",tmpName,parX);
+    // else sprintf(title,"%s Final Variable - %d",tmpName,parX);
+    else sprintf(title,"n%i Final Variable - %d",i,parX);
     hist->Book(title,(int)(histBinsX_*1.0/rebinX_),histMinX_,histMaxX_);
 
     if(!getCollie(bkg[i],hist)){ printf("CollieIOFile::createMassPoint, bkgd histo error!\n"); return; }
@@ -988,7 +996,8 @@ void CollieIOFile::createMassPoint2D(int massX,  int massY, int massZ, TH2D* dat
   map<string,double> inputAlphaS;
   for(uint i = 0; i<sig.size(); i++){
     if(sig[i]==NULL) continue;
-    const char* tmpName = channel_->getSignalName(i);
+    // const char* tmpName = channel_->getSignalName(i);
+    const std::string tmpName = channel_->getSignalName(i);
     applyCuts(sig[i]);
 
     CollieDistribution* dist = point->getSignalDistMutable(i);
@@ -1027,7 +1036,8 @@ void CollieIOFile::createMassPoint2D(int massX,  int massY, int massZ, TH2D* dat
   map<string,double> inputAlpha;
   for(unsigned int i = 0; i<bkg.size(); i++){
     if(bkg[i]==NULL) continue;
-    const char* tmpName = channel_->getBackgroundName(i);
+    // const char* tmpName = channel_->getBackgroundName(i);
+    const std::string tmpName = channel_->getBackgroundName(i);
     applyCuts(bkg[i]);
 
     CollieHistogram2d* hist = new CollieHistogram2d();
